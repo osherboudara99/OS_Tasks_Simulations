@@ -299,9 +299,9 @@ void worst_fit_memory_allocation() {
            
             at_least_one = 1;
        
-            // if current hole is smaller than best so far
+            // if current hole is bigger than worst so far
             if(hole_size > worst_so_far) {
-                // set new value for "best so far", "best start", copy "best block" to current block
+                // set new value for "worst so far", "worst start", copy "worst block" to current block
                 worst_so_far = hole_size;
                 worst_start = hole_start;
                 worst_block_ptr = current_ptr;
