@@ -233,23 +233,21 @@ void best_fit_memory_allocation() {
 }
 
 
-/*
-
-void "PROCEDURE FOR OPTION 3: Worst FIT"() {
- int block_id, int block_size;
+void worst_fit_memory_allocation() {
+ int block_id, block_size;
     block_type* current_ptr = block_ptr;
     block_type* new_block_ptr;
-    block_type* best_block_ptr;
+    block_type* worst_block_ptr;
     int hole_start, hole_end, hole_size;
     int at_least_one = 0;
-    int best_so_far = 0;
-    int best_start;
+    int worst_so_far = 0;
+    int worst_start;
    
     printf("Enter block id: ");
-    scanf("%d", block_id);
+    scanf("%d", &block_id);
    
     printf("Enter block size: ");
-    scanf("%d", block_size);
+    scanf("%d", &block_size);
     // if block size is larger than remaining memory, print message, return
     if (block_size > remaining){
         printf("Not enough memory...");
@@ -262,8 +260,8 @@ void "PROCEDURE FOR OPTION 3: Worst FIT"() {
     if(block_ptr->link == NULL) {
         //set fields for new block, link to block list, reduce remaining memory, return
    
-        new_block_ptr->starting = block_ptr->end;
-        new_block_ptr->end = new_block_ptr->starting + block_size;
+        new_block_ptr->start = block_ptr->start;
+        new_block_ptr->end = block_ptr->start + block_size;
         new_block_ptr->link = NULL;
         block_ptr->link = new_block_ptr;
         remaining -= block_size;
@@ -279,7 +277,7 @@ void "PROCEDURE FOR OPTION 3: Worst FIT"() {
             free(new_block_ptr);
             return;
         }
-        current_ptr =current_ptr->link;
+        current_ptr = current_ptr->link;
     }
 
     current_ptr = block_ptr;
@@ -302,14 +300,17 @@ void "PROCEDURE FOR OPTION 3: Worst FIT"() {
             at_least_one = 1;
        
             // if current hole is smaller than best so far
-            if(hole_size > best_so_far) {
+            if(hole_size > worst_so_far) {
                 // set new value for "best so far", "best start", copy "best block" to current block
-                best_so_far = hole_size;
-                best_start = hole_start;
-                best_block_ptr = current_ptr;
-            }  
-            current_ptr = current_ptr->link;
+                worst_so_far = hole_size;
+                worst_start = hole_start;
+                worst_block_ptr = current_ptr;
+            } 
+            
         }
+        
+        current_ptr = current_ptr->link;
+        
        
     }
    
@@ -318,19 +319,19 @@ void "PROCEDURE FOR OPTION 3: Worst FIT"() {
     if(at_least_one == 0){
         printf("There is no fitting hole");
         free(new_block_ptr);
-        free(best_block_ptr);
+        free(worst_block_ptr);
         return;
     }
 
-    new_block_ptr->start = best_start;
-    new_block_ptr->end = new_block_ptr->start + best_so_far;
-    new_block_ptr->link = best_block_ptr->link;
-    best_block_ptr->link = new_block_ptr->link;
-    remaining -= best_so_far;
+    new_block_ptr->start = worst_start;
+    new_block_ptr->end = worst_start + block_size;
+    new_block_ptr->link = worst_block_ptr->link;
+    worst_block_ptr->link = new_block_ptr;
+    remaining -= block_size;
    
 // set fields for new block, link to block list, reduce remaining memory
     return;
-}*/
+}
 
 void deallocate_block() {
 
@@ -401,17 +402,18 @@ void free_memory(block_type *node) {
 
 int main() {
     int choice = 0;
-    while(choice != 6) {
-        printf("\n\nMemory Allocation \n ---------------- \n 1) Enter parameters \n 2) Allocate memory for block using First-Fit \n 3) Allocate memory for block using Best-Fit \n 4) Deallocate memory for block \n 5) Defragment memory \n 6) Quit and free memory \n");
+    while(choice != 7) {
+        printf("\n\nMemory Allocation \n ---------------- \n 1) Enter parameters \n 2) Allocate memory for block using First-Fit \n 3) Allocate memory for block using Best-Fit \n 4) Allocate memory for block using Worst-Fit \n 5) Deallocate memory for block \n 6) Defragment memory \n 7) Quit and free memory \n");
         printf("\n Enter Selection: ");
         scanf("%d", &choice);
         switch(choice) {
             case 1: printf("\nBlock Initialization (Option 1) selected. \n\n"), block_init(); break;
             case 2: printf("\nFirst-Fit Allocation (Option 2) selected. \n\n"), first_fit_memory_allocation(); print_blocks(); break;
             case 3: printf("\nBest-Fit Allocation (Option 3) selected. \n\n"), best_fit_memory_allocation(); print_blocks(); break;
-            case 4: printf("\nDeallocation of Block (Option 4) selected.  \n\n"), deallocate_block(); print_blocks(); break;
-            case 5: printf("\nDefragmentation of Memory (Option 5) selected.  \n\n"), memory_compaction(); print_blocks(); break;
-            case 6: printf("\nFree Memory and Quit (Option 6) selected.  \n\n"), free_memory(block_ptr); break;
+            case 4: printf("\nWorst-Fit Allocation (Option 4) selected. \n\n"), worst_fit_memory_allocation(); print_blocks(); break;
+            case 5: printf("\nDeallocation of Block (Option 5) selected.  \n\n"), deallocate_block(); print_blocks(); break;
+            case 6: printf("\nDefragmentation of Memory (Option 6) selected.  \n\n"), memory_compaction(); print_blocks(); break;
+            case 7: printf("\nFree Memory and Quit (Option 7) selected.  \n\n"), free_memory(block_ptr); break;
             default: printf("\nInvalid option!\n"); break;
         }
     }
